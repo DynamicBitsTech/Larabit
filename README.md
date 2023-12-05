@@ -15,4 +15,28 @@ Larabit is a robust Laravel package designed to streamline database interactions
 You can install Larabit via Composer. Run the following command:
 
 ```bash
-composer require yourvendorname/larabit
+composer require dynamicbits/larabit
+
+'providers' => [
+    // Other Providers...
+    YourVendorName\Larabit\LarabitServiceProvider::class,
+],
+
+use YourVendorName\Larabit\Larabit;
+
+// Create a new record
+Larabit::create([
+    'field1' => 'value1',
+    'field2' => 'value2',
+]);
+
+// Retrieve a record by ID
+$record = Larabit::find($id);
+
+// Update a record
+Larabit::update($id, [
+    'field1' => 'new value',
+]);
+
+// Delete a record
+Larabit::delete($id);
