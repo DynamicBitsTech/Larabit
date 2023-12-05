@@ -17,11 +17,12 @@ You can install Larabit via Composer. Run the following command:
 ```bash
 composer require dynamicbits/larabit
 
+```
 'providers' => [
     // Other Providers...
     YourVendorName\Larabit\LarabitServiceProvider::class,
 ],
-
+```
 use YourVendorName\Larabit\Larabit;
 
 // Create a new record
