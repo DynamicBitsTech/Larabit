@@ -12,7 +12,10 @@ Larabit is a robust Laravel package designed to streamline database interactions
 
 ## Installation
 
-Install Larabit via Composer:
+You can install Larabit via Composer. Run the following command:
+
+```bash
+composer require yourvendorname/larabit
 
 
 ## Usage
