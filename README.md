@@ -15,8 +15,8 @@ Larabit is a robust Laravel package designed to streamline database interactions
 You can install Larabit via Composer. Run the following command:
 
 ```bash
-composer require yourvendorname/larabit
-
+composer require dynamicbits/larabit
+```
 
 ## Usage
 
@@ -28,3 +28,4 @@ Add the Larabit service provider to your `config/app.php` file:
 'providers' => [
     Dynamicbits\Larabit\LarabitServiceProvider::class,
 ],
+```
