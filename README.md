@@ -23,5 +23,5 @@ Add the Larabit service provider to your `config/app.php` file:
 
 ```php
 'providers' => [
-    YourVendorName\Larabit\LarabitServiceProvider::class,
+    Dynamicbits\Larabit\LarabitServiceProvider::class,
 ],
