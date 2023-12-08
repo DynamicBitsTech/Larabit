@@ -2,18 +2,17 @@
 
 namespace Dynamicbits\Larabit;
 
-use Dynamicbits\Larabit\Repositories\Auth\AuthRepository;
-use Dynamicbits\Larabit\Repositories\Auth\AuthRepositoryInterface;
-use Dynamicbits\Larabit\Repositories\Base\BaseRepository;
-use Dynamicbits\Larabit\Repositories\Base\BaseRepositoryInterface;
-use Dynamicbits\Larabit\Services\Auth\AuthService;
-use Dynamicbits\Larabit\Services\Auth\AuthServiceInterface;
-use Dynamicbits\Larabit\Services\Base\BaseService;
-use Dynamicbits\Larabit\Services\Base\BaseServiceInterface;
+use Dynamicbits\Larabit\Interfaces\Repositories\BaseRepositoryInterface;
+use Dynamicbits\Larabit\Interfaces\Services\BaseServiceInterface;
+use Dynamicbits\Larabit\Repositories\BaseRepository;
+use Dynamicbits\Larabit\Services\BaseService;
 use Illuminate\Support\ServiceProvider;
 
 class LarabitServiceProvider extends ServiceProvider
 {
+
+    protected $commands = [];
+
     public function boot()
     {
     }
@@ -23,12 +22,20 @@ class LarabitServiceProvider extends ServiceProvider
         $toBind = [
             BaseServiceInterface::class => BaseService::class,
             BaseRepositoryInterface::class => BaseRepository::class,
-            AuthServiceInterface::class => AuthService::class,
-            AuthRepositoryInterface::class => AuthRepository::class,
         ];
 
         foreach ($toBind as $interface => $implementation) {
             $this->app->bind($interface, $implementation);
         }
+
+        $commands = [
+            'Install'
+        ];
+
+        foreach ($commands as $command) {
+            array_push($this->commands, "Dynamicbits\Larabit\Commands\\$command");
+        }
+
+        $this->commands($this->commands);
     }
 }

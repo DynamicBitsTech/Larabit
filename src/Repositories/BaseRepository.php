@@ -1,7 +1,8 @@
 <?php
 
-namespace Dynamicbits\Larabit\Repositories\Base;
+namespace Dynamicbits\Larabit\Repositories;
 
+use Dynamicbits\Larabit\Interfaces\Repositories\BaseRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
