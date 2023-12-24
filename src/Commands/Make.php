@@ -28,10 +28,9 @@ class Make extends Command
         }
     }
 
-    private function createFile(string $target, string $stub)
+    private function createFile(string $target, string $content)
     {
         if (!File::exists($target)) {
-            $content = file_get_contents(__DIR__ . '/stubs/interface-service-provider.stub');
             file_put_contents($target, $content);
         } else {
             $this->warn('File already exists: ' . $target);

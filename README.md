@@ -47,8 +47,8 @@ The `InterfaceServiceProvider` is created within the `Interfaces` directory. It 
 
 ## Configuration
 
-### Register Larabit Service Provider
-Add `LarabitServiceProvider` in your `config/app.php` file as follows:
+### Register Larabit Service Provider (Optional)
+If you not using `auto-discovery`, Add `LarabitServiceProvider` in your `config/app.php` file as follows:
 
 ```php
 'providers' => [
@@ -57,6 +57,7 @@ Add `LarabitServiceProvider` in your `config/app.php` file as follows:
     */
     Dynamicbits\Larabit\LarabitServiceProvider::class,
 ],
+```
 
 ### Interface Service Provider
 

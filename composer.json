@@ -18,7 +18,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "DynamicBits\\Larabit\\LarabitServiceProvider"
+                "Dynamicbits\\Larabit\\LarabitServiceProvider"
             ]
         }
     }
