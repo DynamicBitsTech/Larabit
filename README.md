@@ -18,46 +18,37 @@ You can install Larabit via Composer. Run the following command:
 composer require dynamicbits/larabit
 ```
 
-# Larabit Installation Guide
-
 The `larabit:install` command facilitates the setup of essential directories and initializes the `InterfaceServiceProvider` within the `Interfaces` directory in your application.
-
-## Directory Structure
-
-Upon executing `larabit:install`, the following directories will be generated:
-
-### Interfaces
-
--   **Services:** Container for service-related interfaces.
--   **Repositories:** Houses interfaces pertaining to data repositories.
-
-### Repositories
-
--   Dedicated to repository implementations.
-
-### Services
-
--   Accommodates service implementations.
-
-## InterfaceServiceProvider
-
-The `InterfaceServiceProvider` is created within the `Interfaces` directory. It acts as a bridge for the interfaces defined in `Services` and `Repositories`.
-
-## Usage
-
-To run the `larabit:install` command, execute the following in your terminal:
 
 ```bash
 larabit:install
 ```
 
-## Usage
+### Directory Structure
 
-### Configuration
+Upon executing `larabit:install`, the following directories will be generated:
 
-#### Larabit Service Provider
+#### Interfaces
 
-Add the Larabit service provider to your `config/app.php` file within the `providers` array:
+-   **Services:** Container for service-related interfaces.
+-   **Repositories:** Houses interfaces pertaining to data repositories.
+
+#### Repositories
+
+-   Dedicated to repository implementations.
+
+#### Services
+
+-   Accommodates service implementations.
+
+### InterfaceServiceProvider
+
+The `InterfaceServiceProvider` is created within the `Interfaces` directory. It acts as a bridge for the interfaces defined in `Services` and `Repositories`.
+
+## Configuration
+
+### Register Larabit Service Provider
+Add `LarabitServiceProvider` in your `config/app.php` file as follows:
 
 ```php
 'providers' => [
@@ -66,9 +57,8 @@ Add the Larabit service provider to your `config/app.php` file within the `provi
     */
     Dynamicbits\Larabit\LarabitServiceProvider::class,
 ],
-```
 
-#### Interface Service Provider
+### Interface Service Provider
 
 If you've executed the `larabit:install` command and generated the `InterfaceServiceProvider`, include it in your `config/app.php` file as follows:
 
@@ -79,4 +69,12 @@ If you've executed the `larabit:install` command and generated the `InterfaceSer
     */
     App\Interfaces\InterfaceServiceProvider::class,
 ],
+```
+
+## Usage
+
+You can run `larabit:make` artisan command to generate interfaces, service and repository for a specified resource. See example below:
+
+```bash
+php artisan larabit:make Product
 ```

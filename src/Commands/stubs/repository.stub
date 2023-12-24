@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Interfaces\Repositories\{{ $resource }}RepositoryInterface;
+use App\Models\{{ $resource }};
+use Dynamicbits\Larabit\Repositories\BaseRepository;
+
+class {{ $resource }}Repository extends BaseRepository implements {{ $resource }}RepositoryInterface
+{
+    public function __construct({{ $resource }} ${{ $resource }})
+    {
+        parent::__construct(${{ $resource }});
+    }
+}

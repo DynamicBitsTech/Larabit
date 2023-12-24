@@ -6,15 +6,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface BaseServiceInterface
 {
     /**
      * @param array $columns
      * @param array $relations
-     * @return Collection
+     * @param int|bool $pagination
+     * @return Collection|LengthAwarePaginator
      */
-    public function get(array $columns = ['*'], array $relations = []): Collection;
+    public function get(array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator;
 
     /**
      * @param int   $id
@@ -47,9 +49,10 @@ interface BaseServiceInterface
      * @param array $criteria
      * @param array $columns
      * @param array $relations
-     * @return Collection
+     * @param int|bool $pagination
+     * @return Collection|LengthAwarePaginator
      */
-    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = []): Collection;
+    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator;
 
     /**
      * @param array $attributes

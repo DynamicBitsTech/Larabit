@@ -7,53 +7,46 @@ use Illuminate\Support\Facades\File;
 
 class Install extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'larabit:install';
 
-    /**
-     * Execute the console command.
-     */
+    protected $description = 'Creates essential directories and the InterfaceServiceProvider in your application.';
+
     public function handle()
     {
         $directories = [
-            'Interfaces',
-            'Repositories',
-            'Services',
-        ];
-
-        $subDirectories = [
             'Interfaces' => [
                 'Services',
                 'Repositories',
-            ]
+            ],
+            'Repositories' => [],
+            'Services' => [],
         ];
 
-        foreach ($directories as $directory) {
-            $directoryPath = app_path($directory);
-            if (!File::exists($directoryPath)) {
-                File::makeDirectory($directoryPath, 0755, true);
-            } else {
-                $this->warn('Directory already exists: ' . $directoryPath);
+        foreach ($directories as $dir => $subDirs) {
+            $directoryPath = app_path($dir);
+            $this->createDirectory($directoryPath);
+
+            foreach ($subDirs as $subDir) {
+                $this->createDirectory($directoryPath . '\\' . $subDir);
             }
         }
 
-        foreach ($subDirectories as $parent => $children) {
-            // dd($children);
-            foreach ($children as $child) {
-                $directoryPath = app_path($parent) . '/' . $child;
-                if (!File::exists($directoryPath)) {
-                    File::makeDirectory($directoryPath, 0755, true);
-                } else {
-                    $this->warn('Directory already exists: ' . $directoryPath);
-                }
-            }
-        }
+        $filePath = app_path('Interfaces/InterfaceServiceProvider.php');
 
-        $content = file_get_contents(__DIR__ . '/stubs/interface-service-provider.stub');
-        file_put_contents(app_path() . '/Interfaces/InterfaceServiceProvider.php', $content);
+        if (!File::exists($filePath)) {
+            $content = file_get_contents(__DIR__ . '/stubs/interface-service-provider.stub');
+            file_put_contents($filePath, $content);
+        } else {
+            $this->warn('File already exists: ' . $filePath);
+        }
+    }
+
+    private function createDirectory($directoryPath)
+    {
+        if (!File::exists($directoryPath)) {
+            File::makeDirectory($directoryPath, 0755, true);
+        } else {
+            $this->warn('Directory already exists: ' . $directoryPath);
+        }
     }
 }

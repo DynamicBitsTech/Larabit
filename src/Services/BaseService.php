@@ -2,27 +2,35 @@
 
 namespace Dynamicbits\Larabit\Services;
 
-use Dynamicbits\Larabit\Interfaces\Repositories\BaseRepositoryInterface;
 use Dynamicbits\Larabit\Interfaces\Services\BaseServiceInterface;
+use Dynamicbits\Larabit\Repositories\BaseRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class BaseService implements BaseServiceInterface
 {
     /**
-     * @var BaseRepositoryInterface
+     * @var BaseRepository $repo The repository instance used by the service.
      */
-    public function __construct(
-        private BaseRepositoryInterface $repo
-    ) {
+    private BaseRepository $repo;
+
+    /**
+     * BaseService constructor.
+     *
+     * @param Model $model The Eloquent model associated with this service.
+     */
+    public function __construct(Model $model)
+    {
+        $this->repo = new BaseRepository($model);
     }
 
-    public function get(array $columns = ['*'], array $relations = []): Collection
+    public function get(array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
     {
-        return $this->repo->get($columns, $relations);
+        return $this->repo->get($columns, $relations, $pagination);
     }
 
     public function findById(int $id, array $columns = ['*'], array $relations = []): Model
@@ -40,9 +48,9 @@ class BaseService implements BaseServiceInterface
         return $this->repo->findByCriteria($criteria, $columns, $relations);
     }
 
-    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = []): Collection
+    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
     {
-        return $this->repo->getByCriteria($criteria, $columns, $relations);
+        return $this->repo->getByCriteria($criteria, $columns, $relations, $pagination);
     }
 
     public function create(array $attributes): Model

@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Services;
+
+use App\Interfaces\Repositories\{{ $resource }}RepositoryInterface;
+use App\Interfaces\Services\{{ $resource }}ServiceInterface;
+use App\Models\{{ $resource }};
+use Dynamicbits\Larabit\Services\BaseService;
+
+class {{ $resource }}Service extends BaseService implements {{ $resource }}ServiceInterface
+{
+    public function __construct(
+        private {{ $resource }}RepositoryInterface $i{{ $resource }}Repository,
+        private {{ $resource }} ${{ $resource }}
+    ) {
+        parent::__construct(${{ $resource }});
+    }
+}

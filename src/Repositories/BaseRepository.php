@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class BaseRepository implements BaseRepositoryInterface
 {
@@ -19,9 +20,10 @@ class BaseRepository implements BaseRepositoryInterface
     ) {
     }
 
-    public function get($columns = ['*'], $relations = []): Collection
+    public function get($columns = ['*'], $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
     {
-        return $this->model->with($relations)->get($columns);
+        $query = $this->model->select($columns)->with($relations);
+        return $pagination ? $query->paginate($pagination) : $query->get();
     }
 
     public function findById(int $id, array $columns = ['*'], array $relations = []): Model
@@ -36,17 +38,23 @@ class BaseRepository implements BaseRepositoryInterface
 
     public function findByCriteria(array $criteria, array $columns = ['*'], array $relations = []): Model
     {
-        return $this->newQuery()->select($columns)->with($relations)->where($criteria)->firstOrFail();
+        return $this->newQuery()
+            ->select($columns)
+            ->with($relations)
+            ->where($criteria)
+            ->firstOrFail();
     }
 
-    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = []): Collection
+    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
     {
-        return $this->newQuery()->select($columns)->with($relations)->where($criteria)->get();
+        $query = $this->model->newQuery()->select($columns)->with($relations)->where($criteria);
+        return $pagination ? $query->paginate($pagination) : $query->get();
     }
 
     public function create(array $attributes): Model
     {
-        return $this->newQuery()->create($attributes);
+        return $this->newQuery()
+            ->create($attributes);
     }
 
     public function update(Model $model, array $attributes): ?bool

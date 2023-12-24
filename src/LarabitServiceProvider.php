@@ -29,7 +29,8 @@ class LarabitServiceProvider extends ServiceProvider
         }
 
         $commands = [
-            'Install'
+            'Install',
+            'Make',
         ];
 
         foreach ($commands as $command) {
