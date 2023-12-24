@@ -57,6 +57,7 @@ Add `LarabitServiceProvider` in your `config/app.php` file as follows:
     */
     Dynamicbits\Larabit\LarabitServiceProvider::class,
 ],
+```
 
 ### Interface Service Provider
 
