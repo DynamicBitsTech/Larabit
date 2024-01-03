@@ -14,12 +14,17 @@
             "email": "dynamicbits@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "extra": {
         "laravel": {
             "providers": [
                 "Dynamicbits\\Larabit\\LarabitServiceProvider"
             ]
         }
-    }
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

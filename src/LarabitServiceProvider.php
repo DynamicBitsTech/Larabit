@@ -2,31 +2,30 @@
 
 namespace Dynamicbits\Larabit;
 
-use Dynamicbits\Larabit\Interfaces\Repositories\BaseRepositoryInterface;
-use Dynamicbits\Larabit\Interfaces\Services\BaseServiceInterface;
-use Dynamicbits\Larabit\Repositories\BaseRepository;
-use Dynamicbits\Larabit\Services\BaseService;
+use Dynamicbits\Larabit\Traits\ProviderTrait;
 use Illuminate\Support\ServiceProvider;
 
 class LarabitServiceProvider extends ServiceProvider
 {
+    use ProviderTrait;
 
-    protected $commands = [];
+    private array $commands = [];
 
     public function boot()
     {
+        //
     }
 
     public function register()
     {
-        $toBind = [
-            BaseServiceInterface::class => BaseService::class,
-            BaseRepositoryInterface::class => BaseRepository::class,
+        $this->directories = [
+            'Repositories' => __DIR__ . '/Interfaces/Repositories',
+            'Services' => __DIR__ . '/Interfaces/Services'
         ];
 
-        foreach ($toBind as $interface => $implementation) {
-            $this->app->bind($interface, $implementation);
-        }
+        $this->namespace = 'Dynamicbits\Larabit';
+
+        $this->up();
 
         $commands = [
             'Install',
@@ -34,9 +33,15 @@ class LarabitServiceProvider extends ServiceProvider
         ];
 
         foreach ($commands as $command) {
-            array_push($this->commands, "Dynamicbits\Larabit\Commands\\$command");
+            array_push($this->commands, "Dynamicbits\Larabit\Console\\$command");
         }
 
         $this->commands($this->commands);
+
+        $routerPath = base_path('routes/auth.php');
+
+        if (file_exists($routerPath)) {
+            $this->loadRoutesFrom($routerPath);
+        }
     }
 }

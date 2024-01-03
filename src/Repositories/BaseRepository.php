@@ -22,7 +22,7 @@ class BaseRepository implements BaseRepositoryInterface
 
     public function get($columns = ['*'], $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
     {
-        $query = $this->model->select($columns)->with($relations);
+        $query = $this->model->select($columns)->with($relations)->orderByDesc('id');
         return $pagination ? $query->paginate($pagination) : $query->get();
     }
 
@@ -47,7 +47,7 @@ class BaseRepository implements BaseRepositoryInterface
 
     public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
     {
-        $query = $this->model->newQuery()->select($columns)->with($relations)->where($criteria);
+        $query = $this->model->newQuery()->select($columns)->with($relations)->where($criteria)->orderByDesc('id');
         return $pagination ? $query->paginate($pagination) : $query->get();
     }
 
