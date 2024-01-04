@@ -46,15 +46,14 @@ class AuthApiController extends Controller
 
     public function sendResetOTP(PasswordOtpApiRequest $request)
     {
-        $otp = $this->iAuthService->sendResetOTP($request->validated('email'));
+        $otpSent = $this->iAuthService->sendResetOTP($request->validated('email'));
 
         $isBool = is_bool($otp);
 
         return response()->json([
-            'success' => !$isBool ? true : false,
-            'OTP' => !$isBool ? $otp : null,
-            'message' => !$isBool ? 'Password Reset OTP has been generated' : 'Something went wrong',
-        ], !$isBool ? 200 : 500);
+            'success' => $otpSent,
+            'message' => $otpSent ? 'Password Reset OTP has been sent' : 'Something went wrong',
+        ], $otpSent ? 200 : 500);
     }
 
     public function verifyResetOTP(PasswordVerifyOtpApiRequest $request, string $email)

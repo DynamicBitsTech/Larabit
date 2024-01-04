@@ -94,13 +94,17 @@ class BaseAuthService implements BaseAuthServiceInterface
         return $otpSaved ? $otp : $otpSaved;
     }
 
-    public function sendResetOTP(string $email): string|bool
+    public function sendResetOTP(string $email): bool
     {
         $otp = $this->createResetOTP($email);
 
-        User::whereEmail($email)->first()->notify(new ResetPasswordOTP($otp));
+        $isBool = is_bool($otp);
 
-        return $otp;
+        if (!$isBool) {
+            User::whereEmail($email)->first()->notify(new ResetPasswordOTP($otp));
+        }
+
+        return !$isBool ? true : false;
     }
 
     public function verifyResetOTP(string $email, string $otp): bool|string

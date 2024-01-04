@@ -16,7 +16,7 @@ interface BaseAuthServiceInterface
     public function updatePassword(string $email, string $password): ?bool;
     public function deleteResetToken(string $email): void;
     public function createResetOTP(string $email): string|bool;
-    public function sendResetOTP(string $email): string|bool;
+    public function sendResetOTP(string $email): bool;
     public function verifyResetOTP(string $email, string $otp): bool|string;
     public function resetPassword(string $token, string $email, string $password): bool;
 }
