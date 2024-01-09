@@ -21,7 +21,7 @@ composer require dynamicbits/larabit
 The `larabit:install` command facilitates the setup of essential directories and initializes the `InterfaceServiceProvider` within the `Interfaces` directory in your application.
 
 ```bash
-larabit:install
+php artisan larabit:install
 ```
 
 ### Directory Structure

@@ -20,9 +20,10 @@ class BaseRepository implements BaseRepositoryInterface
     ) {
     }
 
-    public function get($columns = ['*'], $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
+    public function get($columns = ['*'], $relations = [], int|bool $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
     {
-        $query = $this->model->select($columns)->with($relations)->orderByDesc('id');
+        $query = $this->model->select($columns)->with($relations);
+        $query = $orderByDesc ? $query->orderByDesc($orderBy) : $query->orderBy($orderBy);
         return $pagination ? $query->paginate($pagination) : $query->get();
     }
 
@@ -45,9 +46,10 @@ class BaseRepository implements BaseRepositoryInterface
             ->firstOrFail();
     }
 
-    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
+    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
     {
-        $query = $this->model->newQuery()->select($columns)->with($relations)->where($criteria)->orderByDesc('id');
+        $query = $this->model->newQuery()->select($columns)->with($relations)->where($criteria);
+        $query = $orderByDesc ? $query->orderByDesc($orderBy) : $query->orderBy($orderBy);
         return $pagination ? $query->paginate($pagination) : $query->get();
     }
 

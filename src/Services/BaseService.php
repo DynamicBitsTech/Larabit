@@ -28,9 +28,9 @@ class BaseService implements BaseServiceInterface
         $this->repo = new BaseRepository($model);
     }
 
-    public function get(array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
+    public function get($columns = ['*'], $relations = [], int|bool $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
     {
-        return $this->repo->get($columns, $relations, $pagination);
+        return $this->repo->get($columns, $relations, $pagination, $orderBy, $orderByDesc);
     }
 
     public function findById(int $id, array $columns = ['*'], array $relations = []): Model
@@ -48,9 +48,9 @@ class BaseService implements BaseServiceInterface
         return $this->repo->findByCriteria($criteria, $columns, $relations);
     }
 
-    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10): Collection|LengthAwarePaginator
+    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
     {
-        return $this->repo->getByCriteria($criteria, $columns, $relations, $pagination);
+        return $this->repo->getByCriteria($criteria, $columns, $relations, $pagination, $orderBy, $orderByDesc);
     }
 
     public function create(array $attributes): Model
