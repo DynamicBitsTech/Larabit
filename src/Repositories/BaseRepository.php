@@ -20,37 +20,39 @@ class BaseRepository implements BaseRepositoryInterface
     ) {
     }
 
-    public function get($columns = ['*'], $relations = [], int|bool $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
+    public function get($columns = ['*'], $relations = [], int|bool $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true, bool $withTrash = false): Collection|LengthAwarePaginator
     {
-        $query = $this->model->select($columns)->with($relations);
-        $query = $orderByDesc ? $query->orderByDesc($orderBy) : $query->orderBy($orderBy);
-        return $pagination ? $query->paginate($pagination) : $query->get();
+        $query = $this->withTrash($withTrash);
+        $query = $query->select($columns)->with($relations);
+        $query = $this->orderBy($query, $orderBy, $orderByDesc);
+        return $this->pagination($query, $pagination);
     }
 
-    public function findById(int $id, array $columns = ['*'], array $relations = []): Model
+    public function findById(int $id, array $columns = ['*'], array $relations = [], bool $withTrash = false): Model
     {
-        return $this->findByCriteria(['id' => $id], $columns, $relations);
+        return $this->findByCriteria(['id' => $id], $columns, $relations, $withTrash);
     }
 
-    public function findByUuid(string $uuid, array $columns = ['*'], array $relations = []): Model
+    public function findByUuid(string $uuid, array $columns = ['*'], array $relations = [], bool $withTrash = false): Model
     {
-        return $this->findByCriteria(['uuid' => $uuid], $columns, $relations);
+        return $this->findByCriteria(['uuid' => $uuid], $columns, $relations, $withTrash);
     }
 
-    public function findByCriteria(array $criteria, array $columns = ['*'], array $relations = []): Model
+    public function findByCriteria(array $criteria, array $columns = ['*'], array $relations = [], bool $withTrash = false): Model
     {
-        return $this->newQuery()
-            ->select($columns)
+        $query = $this->withTrash($withTrash);
+        return $query->select($columns)
             ->with($relations)
             ->where($criteria)
             ->firstOrFail();
     }
 
-    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
+    public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int|bool $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true, bool $withTrash = false): Collection|LengthAwarePaginator
     {
-        $query = $this->model->newQuery()->select($columns)->with($relations)->where($criteria);
-        $query = $orderByDesc ? $query->orderByDesc($orderBy) : $query->orderBy($orderBy);
-        return $pagination ? $query->paginate($pagination) : $query->get();
+        $query = $this->withTrash($withTrash);
+        $query = $query->select($columns)->with($relations)->where($criteria);
+        $query = $this->orderBy($query, $orderBy, $orderByDesc);
+        return $this->pagination($query, $pagination);
     }
 
     public function create(array $attributes): Model
@@ -69,8 +71,41 @@ class BaseRepository implements BaseRepositoryInterface
         return $model->delete();
     }
 
+    public function restore(Model $model): ?bool
+    {
+        return $model->restore();
+    }
+
+    public function forceDelete(Model $model): ?bool
+    {
+        return $model->forceDelete();
+    }
+
+    public function trash($columns = ['*'], $relations = [], int|bool $pagination = 10, string $orderBy = 'deleted_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
+    {
+        $query = $this->newQuery()->onlyTrashed();
+        $query = $query->select($columns)->with($relations);
+        $query = $this->orderBy($query, $orderBy, $orderByDesc);
+        return $this->pagination($query, $pagination);
+    }
+
     public function newQuery(): Builder
     {
         return $this->model->newQuery();
+    }
+
+    private function withTrash(bool $withTrash): Builder
+    {
+        return $withTrash ? $this->newQuery()->withTrashed() : $this->newQuery();
+    }
+
+    private function orderBy(Builder $query, string $orderBy, bool $orderByDesc): Builder
+    {
+        return $orderByDesc ? $query->orderByDesc($orderBy) : $query->orderBy($orderBy);
+    }
+
+    private function pagination(Builder $query, int|bool $pagination): Collection|LengthAwarePaginator
+    {
+        return $pagination ? $query->paginate($pagination) : $query->get();
     }
 }
