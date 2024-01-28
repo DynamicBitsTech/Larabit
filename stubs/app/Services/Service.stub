@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\Interfaces\Repositories\{{ $resource }}RepositoryInterface;
-use App\Interfaces\Services\{{ $resource }}ServiceInterface;
-use App\Models\{{ $resource }};
+use App\Interfaces\Repositories\{{ $entity }}RepositoryInterface;
+use App\Interfaces\Services\{{ $entity }}ServiceInterface;
+use App\Models\{{ $entity }};
 use Dynamicbits\Larabit\Services\BaseService;
 
-class {{ $resource }}Service extends BaseService implements {{ $resource }}ServiceInterface
+class {{ $entity }}Service extends BaseService implements {{ $entity }}ServiceInterface
 {
     public function __construct(
-        private {{ $resource }}RepositoryInterface $i{{ $resource }}Repository,
-        private {{ $resource }} ${{ $resource }}
+        private {{ $entity }}RepositoryInterface $i{{ $entity }}Repository,
+        private {{ $entity }} ${{ $entity }}
     ) {
-        parent::__construct(${{ $resource }});
+        parent::__construct(${{ $entity }});
     }
 }

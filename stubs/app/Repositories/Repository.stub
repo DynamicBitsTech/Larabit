@@ -2,14 +2,14 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\Repositories\{{ $resource }}RepositoryInterface;
-use App\Models\{{ $resource }};
+use App\Interfaces\Repositories\{{ $entity }}RepositoryInterface;
+use App\Models\{{ $entity }};
 use Dynamicbits\Larabit\Repositories\BaseRepository;
 
-class {{ $resource }}Repository extends BaseRepository implements {{ $resource }}RepositoryInterface
+class {{ $entity }}Repository extends BaseRepository implements {{ $entity }}RepositoryInterface
 {
-    public function __construct({{ $resource }} ${{ $resource }})
+    public function __construct({{ $entity }} ${{ $entity }})
     {
-        parent::__construct(${{ $resource }});
+        parent::__construct(${{ $entity }});
     }
 }

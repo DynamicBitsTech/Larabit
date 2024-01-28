@@ -4,6 +4,6 @@ namespace App\Interfaces\Services;
 
 use Dynamicbits\Larabit\Interfaces\Services\BaseServiceInterface;
 
-interface {{ $resource }}ServiceInterface extends BaseServiceInterface
+interface {{ $entity }}ServiceInterface extends BaseServiceInterface
 {
 }

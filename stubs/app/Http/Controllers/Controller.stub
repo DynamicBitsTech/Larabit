@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\{{ $entity }}\Store{{ $entity }}Request;
+use App\Http\Requests\{{ $entity }}\Update{{ $entity }}Request;
+use App\Interfaces\Services\{{ $entity }}ServiceInterface;
+use App\Models\{{ $entity }};
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+
+class {{ $entity }}Controller extends Controller
+{
+    public function __construct(
+        private {{ $entity }}ServiceInterface $i{{ $entity }}Service
+    ) {
+    }
+
+    public function create(): View
+    {
+        return view('{{ $view }}.create');
+    }
+
+    public function store(Store{{ $entity }}Request $request): RedirectResponse
+    {
+        $attributes = $request->validated();
+        ${{ $entityCamel }} = $this->i{{ $entity }}Service->create($attributes);
+
+        return to_route('{{ $entityRoute }}.index')->with(
+            ${{ $entityCamel }} ? 'success' : 'error',
+            ${{ $entityCamel }} ? '{{ $entityCapital }} Added!' : 'Something Went Wrong!'
+        );
+    }
+
+    public function index(): View
+    {
+        $data = [
+            '{{ $varEntityPlural }}' => $this->i{{ $entity }}Service->get()
+        ];
+
+        return view('{{ $view }}.index', $data);
+    }
+
+    public function edit({{ $entity }} ${{ $entityCamel }}): View
+    {
+        $data = [
+            '{{ $entityCamel }}' => ${{ $entityCamel }}
+        ];
+
+        return view('{{ $view }}.edit', $data);
+    }
+
+    public function update(Update{{ $entity }}Request $request, {{ $entity }} ${{ $entityCamel }}): RedirectResponse
+    {
+        $attributes = $request->validated();
+
+        $updated = $this->i{{ $entity }}Service->update(${{ $entityCamel }}, $attributes);
+
+        return to_route('{{ $entityRoute }}.index')->with(
+            $updated ? 'success' : 'error',
+            $updated ? '{{ $entityCapital }} Updated!' : 'Something Went Wrong!'
+        );
+    }
+
+    public function destroy({{ $entity }} ${{ $entityCamel }})
+    {
+        $deleted = $this->i{{ $entity }}Service->delete(${{ $entityCamel }});
+
+        return to_route('{{ $entityRoute }}.index')->with(
+            $deleted ? 'success' : 'error',
+            $deleted ? '{{ $entityCapital }} Deleted!' : 'Something Went Wrong!'
+        );
+    }
+
+    public function trash()
+    {
+        $data = [
+            '{{ $varEntityPlural }}' => $this->i{{ $entity }}Service->trash()
+        ];
+
+        return view('{{ $view }}.trash', $data);
+    }
+
+    public function restore({{ $entity }} ${{ $entityCamel }})
+    {
+        $restored = $this->i{{ $entity }}Service->restore(${{ $entityCamel }});
+
+        return to_route('{{ $entityRoute }}.trash')->with(
+            $restored ? 'success' : 'error',
+            $restored ? '{{ $entityCapital }} Restored!' : 'Something Went Wrong!'
+        );
+    }
+
+    public function destroyPermanently({{ $entity }} ${{ $entityCamel }})
+    {
+        $deleted = $this->i{{ $entity }}Service->forceDelete(${{ $entityCamel }});
+
+        return to_route('{{ $entityRoute }}.trash')->with(
+            $deleted ? 'success' : 'error',
+            $deleted ? '{{ $entityCapital }} Deleted Permanently!' : 'Something Went Wrong!'
+        );
+    }
+}
