@@ -74,7 +74,7 @@ If you've executed the `larabit:install` command and generated the `InterfaceSer
 
 ## Usage
 
-You can run `larabit:make` artisan command to generate interfaces, service and repository for a specified resource. See example below:
+You can run `larabit:make` artisan command to generate interfaces, service, repository, controller and routes for a specified resource. See example below:
 
 ```bash
 php artisan larabit:make Product
