@@ -66,7 +66,7 @@ class Make extends Command
         $entitySnake = Str::snake($entity);
         $entityCamel = Str::camel($entity);
         $entityCapital = ucwords(str_replace('_', ' ', $entitySnake));
-        $entityRoute = str_replace(' ', '-', strtolower($entityCapital));
+        $entityRoute = Str::pluralStudly(Str::kebab($entitySnake));
 
         // Define the path to the controller stub file
         $controllerStub = __DIR__ . '/../../stubs/app/Http/Controllers/Controller.stub';
@@ -89,17 +89,16 @@ class Make extends Command
         $this->createFile($target, $content);
 
         // append routes
-        $this->appendRoutes($entitySnake, $entityCamel);
+        $this->appendRoutes($entitySnake, $entityCamel, $entityRoute);
     }
 
-    private function appendRoutes($entitySnake, $entityCamel)
+    private function appendRoutes($entitySnake, $entityCamel, $entityRoute)
     {
         $entityPascal = ucwords(str_replace('_', '', $entitySnake));
-        $entityRouteName = Str::pluralStudly(Str::kebab($entitySnake));
         $routes = file_get_contents(__DIR__ . '/../../stubs/routes/web.stub');
         $routes = str_replace('{{ $entity }}', $entityPascal, $routes);
         $routes = str_replace('{{ $entityCamel }}', $entityCamel, $routes);
-        $routes = str_replace('{{ $entityRouteName }}', $entityRouteName, $routes);
+        $routes = str_replace('{{ $entityRoute }}', $entityRoute, $routes);
         file_put_contents(base_path() . '/routes/web.php', $routes, FILE_APPEND);
     }
 }

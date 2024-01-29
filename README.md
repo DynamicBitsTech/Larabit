@@ -48,6 +48,7 @@ The `InterfaceServiceProvider` is created within the `Interfaces` directory. It 
 ## Configuration
 
 ### Register Larabit Service Provider (Optional)
+
 If you not using `auto-discovery`, Add `LarabitServiceProvider` in your `config/app.php` file as follows:
 
 ```php
@@ -74,7 +75,7 @@ If you've executed the `larabit:install` command and generated the `InterfaceSer
 
 ## Usage
 
-You can run `larabit:make` artisan command to generate interfaces, service and repository for a specified resource. See example below:
+You can run `larabit:make` artisan command to generate interfaces, service, repository and controller for a specified resource. See example below:
 
 ```bash
 php artisan larabit:make Product

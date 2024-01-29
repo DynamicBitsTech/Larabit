@@ -3,7 +3,7 @@
 
 use App\Http\Controllers\{{ $entity }}Controller;
 
-Route::prefix('{{ $entityRouteName }}')->name('{{ $entityRouteName }}.')->group(function () {
+Route::prefix('{{ $entityRoute }}')->name('{{ $entityRoute }}.')->group(function () {
     Route::get('/', [{{ $entity }}Controller::class, 'index'])->name('index');
     Route::get('/create', [{{ $entity }}Controller::class, 'create'])->name('create');
     Route::post('/', [{{ $entity }}Controller::class, 'store'])->name('store');
