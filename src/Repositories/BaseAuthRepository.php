@@ -23,7 +23,13 @@ class BaseAuthRepository implements BaseAuthRepositoryInterface
 
     public function hasRole(array $roles): bool
     {
-        return in_array($roles, auth()->user()->roles, true);
+        foreach ($roles as $role) {
+            if (in_array($role, auth()->user()->roles->pluck('name')->toArray(), true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function createApiToken(): string
