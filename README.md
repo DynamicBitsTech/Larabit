@@ -62,7 +62,7 @@ If you not using `auto-discovery`, Add `LarabitServiceProvider` in your `config/
 
 ### Interface Service Provider
 
-If you've executed the `larabit:install` command and generated the `InterfaceServiceProvider`, include it in your `config/app.php` file as follows:
+If you've executed the `larabit:install` command and generated the `InterfaceServiceProvider`, include it in `config/app.php` for `Laravel 10 or older versions` as follows:
 
 ```php
 'providers' => [
@@ -71,6 +71,15 @@ If you've executed the `larabit:install` command and generated the `InterfaceSer
     */
     App\Interfaces\InterfaceServiceProvider::class,
 ],
+```
+
+For `Laravel 11` or above, add in `bootstrap/providers.php`
+```php
+return [
+    ...
+    ...
+    App\Interfaces\InterfaceServiceProvider::class,
+];
 ```
 
 ## Usage
