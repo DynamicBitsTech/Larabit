@@ -94,17 +94,17 @@ class BaseRepository implements BaseRepositoryInterface
         return $this->model->newQuery();
     }
 
-    private function withTrash(bool $withTrash): Builder
+    protected function withTrash(bool $withTrash): Builder
     {
         return $withTrash ? $this->newQuery()->withTrashed() : $this->newQuery();
     }
 
-    private function orderBy(Builder $query, string $orderBy, bool $orderByDesc): Builder
+    protected function orderBy(Builder $query, string $orderBy, bool $orderByDesc): Builder
     {
         return $orderByDesc ? $query->orderByDesc($orderBy) : $query->orderBy($orderBy);
     }
 
-    private function pagination(Builder $query, int|bool $pagination): Collection|LengthAwarePaginator
+    protected function pagination(Builder $query, int|bool $pagination): Collection|LengthAwarePaginator
     {
         return $pagination ? $query->paginate($pagination) : $query->get();
     }

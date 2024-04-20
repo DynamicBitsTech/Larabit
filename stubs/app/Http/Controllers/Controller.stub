@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\{{ $entity }}\Store{{ $entity }}Request;
-use App\Http\Requests\{{ $entity }}\Update{{ $entity }}Request;
+use App\Http\Requests\{{ $entity }}\StoreRequest;
+use App\Http\Requests\{{ $entity }}\UpdateRequest;
 use App\Interfaces\Services\{{ $entity }}ServiceInterface;
 use App\Models\{{ $entity }};
 use Illuminate\Contracts\View\View;
@@ -18,10 +18,10 @@ class {{ $entity }}Controller extends Controller
 
     public function create(): View
     {
-        return view('{{ $view }}.create');
+        return view('content.{{ $view }}.create');
     }
 
-    public function store(Store{{ $entity }}Request $request): RedirectResponse
+    public function store(StoreRequest $request): RedirectResponse
     {
         $attributes = $request->validated();
         ${{ $entityCamel }} = $this->i{{ $entity }}Service->create($attributes);
@@ -38,7 +38,7 @@ class {{ $entity }}Controller extends Controller
             '{{ $varEntityPlural }}' => $this->i{{ $entity }}Service->get()
         ];
 
-        return view('{{ $view }}.index', $data);
+        return view('content.{{ $view }}.index', $data);
     }
 
     public function edit({{ $entity }} ${{ $entityCamel }}): View
@@ -47,10 +47,10 @@ class {{ $entity }}Controller extends Controller
             '{{ $entityCamel }}' => ${{ $entityCamel }}
         ];
 
-        return view('{{ $view }}.edit', $data);
+        return view('content.{{ $view }}.edit', $data);
     }
 
-    public function update(Update{{ $entity }}Request $request, {{ $entity }} ${{ $entityCamel }}): RedirectResponse
+    public function update(UpdateRequest $request, {{ $entity }} ${{ $entityCamel }}): RedirectResponse
     {
         $attributes = $request->validated();
 
@@ -78,7 +78,7 @@ class {{ $entity }}Controller extends Controller
             '{{ $varEntityPlural }}' => $this->i{{ $entity }}Service->trash()
         ];
 
-        return view('{{ $view }}.trash', $data);
+        return view('content.{{ $view }}.trash', $data);
     }
 
     public function restore({{ $entity }} ${{ $entityCamel }})

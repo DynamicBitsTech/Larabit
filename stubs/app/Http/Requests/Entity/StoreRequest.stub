@@ -4,7 +4,7 @@ namespace App\Http\Requests\{{ $entity }};
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class Store{{ $entity }}Request extends FormRequest
+class StoreRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,7 +14,7 @@ class Store{{ $entity }}Request extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            //
         ];
     }
 }

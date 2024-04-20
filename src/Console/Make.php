@@ -25,8 +25,8 @@ class Make extends Command
                 app_path() . "/Interfaces/Services/{$entity}ServiceInterface.php" => __DIR__ . '/../../stubs/app/Interfaces/Services/ServiceInterface.stub',
                 app_path() . "/Repositories/{$entity}Repository.php" => __DIR__ . '/../../stubs/app/Repositories/Repository.stub',
                 app_path() . "/Services/{$entity}Service.php" => __DIR__ . '/../../stubs/app/Services/Service.stub',
-                app_path() . "/Http/Requests/{$entity}/Store{$entity}Request.php" =>  __DIR__ . '/../../stubs/app/Http/Requests/Entity/StoreRequest.stub',
-                app_path() . "/Http/Requests/{$entity}/Update{$entity}Request.php" =>  __DIR__ . '/../../stubs/app/Http/Requests/Entity/UpdateRequest.stub',
+                app_path() . "/Http/Requests/{$entity}/StoreRequest.php" =>  __DIR__ . '/../../stubs/app/Http/Requests/Entity/StoreRequest.stub',
+                app_path() . "/Http/Requests/{$entity}/UpdateRequest.php" =>  __DIR__ . '/../../stubs/app/Http/Requests/Entity/UpdateRequest.stub',
             ];
 
             foreach ($stubs as $target => $stub) {
@@ -64,9 +64,10 @@ class Make extends Command
     {
         // Get the user-provided entity name and prepare some variables based on it
         $entitySnake = Str::snake($entity);
+        $entityKebab = Str::kebab($entitySnake);
         $entityCamel = Str::camel($entity);
         $entityCapital = ucwords(str_replace('_', ' ', $entitySnake));
-        $entityRoute = Str::pluralStudly(Str::kebab($entitySnake));
+        $entityRoute = Str::singular($entityKebab);
 
         // Define the path to the controller stub file
         $controllerStub = __DIR__ . '/../../stubs/app/Http/Controllers/Controller.stub';
@@ -78,7 +79,7 @@ class Make extends Command
         $content = str_replace('{{ $entity }}', $entity, $content);
         $content = str_replace('{{ $entityCamel }}', $entityCamel, $content);
         $content = str_replace('{{ $varEntityPlural }}', Str::pluralStudly($entityCamel), $content);
-        $content = str_replace('{{ $view }}', $entitySnake, $content);
+        $content = str_replace('{{ $view }}', $entityKebab, $content);
         $content = str_replace('{{ $entityCapital }}', $entityCapital, $content);
         $content = str_replace('{{ $entityRoute }}', $entityRoute, $content);
 
