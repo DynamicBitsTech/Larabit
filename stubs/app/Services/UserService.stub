@@ -1,0 +1,9 @@
+<?php
+
+namespace App\Services;
+
+use Dynamicbits\Larabit\Services\BaseUserService;
+
+class UserService extends BaseUserService
+{
+}

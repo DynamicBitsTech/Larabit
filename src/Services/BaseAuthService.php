@@ -3,121 +3,62 @@
 namespace Dynamicbits\Larabit\Services;
 
 use App\Models\User;
-use Dynamicbits\Larabit\Interfaces\Repositories\BaseAuthRepositoryInterface;
-use Dynamicbits\Larabit\Interfaces\Services\BaseAuthServiceInterface;
-use Dynamicbits\Larabit\Notifications\ResetPasswordLink;
-use Dynamicbits\Larabit\Notifications\ResetPasswordOTP;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 
-class BaseAuthService implements BaseAuthServiceInterface
+abstract class BaseAuthService
 {
     public function __construct(
-        private BaseAuthRepositoryInterface $iAuthRepository
+        private BaseUserService $baseUserService
     ) {
     }
-
-    public function auth(array $credentials, bool $remember = false, array $roles = [], bool $createApiToken = false): bool|string
+    public function login(array $credentials, $remember = false, array|string|null $roles = null, string $authColumn = 'email'): bool
     {
-        $authenticated = $this->iAuthRepository->auth($credentials, $remember);
-
-        if (!$authenticated) {
+        $authenticated = $this->authenticate($credentials, $remember, $authColumn);
+        if (!empty($roles) && !$this->baseUserService->hasRole($roles)) {
+            $this->logout();
             return false;
         }
-
-        if (!empty($roles) && !$this->iAuthRepository->hasRole($roles)) {
-            if (!$createApiToken) {
-                $this->logout();
-            }
-            return false;
-        }
-
-        if ($createApiToken) {
-            return $this->createApiToken();
-        }
-
-        return true;
+        return $authenticated;
     }
-
-    public function createApiToken(): string
-    {
-        return $this->iAuthRepository->createApiToken();
-    }
-
     public function logout(): void
     {
-        auth()->logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
+        Auth::logout();
+        Request::session()->invalidate();
+        Request::session()->regenerate();
     }
-
-    public function revokeApiToken(): bool
+    public function passwordEmail(string $email): bool
     {
-        return $this->iAuthRepository->revokeApiToken();
+        return Password::RESET_LINK_SENT === Password::sendResetLink(['email' => $email]);
     }
-
-    public function sendResetPasswordLink(string $email): void
+    public function passwordUpdate(array $credentials)
     {
-        $token = $this->createResetToken($email);
-        $url = URL::temporarySignedRoute('password.reset', now()->addHour(), ['token' => $token, 'email' => $email]);
-        User::whereEmail($email)->first()->notify(new ResetPasswordLink($url));
+        $status = Password::reset(
+            $credentials,
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+                $user->save();
+                event(new PasswordReset($user));
+            }
+        );
+        return $status === Password::PASSWORD_RESET;
     }
-
-    public function createResetToken(string $email): string
+    private function authenticate(array $credentials, bool $remember, $authColumn = 'email'): bool
     {
-        return $this->iAuthRepository->createResetToken($email);
-    }
-
-    public function verifyResetToken(string $email, string $token): bool
-    {
-        return $this->iAuthRepository->verifyResetToken($email, $token);
-    }
-
-    public function updatePassword(string $email, string $password): ?bool
-    {
-        return $this->iAuthRepository->updatePassword($email, $password);
-    }
-
-    public function deleteResetToken(string $email): void
-    {
-        $this->iAuthRepository->deleteResetToken($email);
-    }
-
-    public function createResetOTP(string $email): string|bool
-    {
-        $otp = rand(100000, 999999);
-
-        $hashedOtp = Hash::make($otp);
-
-        $otpSaved = $this->iAuthRepository->storeResetOTP($email, $hashedOtp);
-
-        return $otpSaved ? $otp : $otpSaved;
-    }
-
-    public function sendResetOTP(string $email): bool
-    {
-        $otp = $this->createResetOTP($email);
-
-        $isBool = is_bool($otp);
-
-        if (!$isBool) {
-            User::whereEmail($email)->first()->notify(new ResetPasswordOTP($otp));
+        if ($authColumn == 'email') {
+            return Auth::attempt($credentials, $remember);
         }
-
-        return !$isBool ? true : false;
-    }
-
-    public function verifyResetOTP(string $email, string $otp): bool|string
-    {
-        $isValid = $this->verifyResetToken($email, $otp);
-
-        return $isValid ? URL::temporarySignedRoute('password.reset.api', now()->addMinutes(5), ['email' => $email]) : $isValid;
-    }
-
-    public function resetPassword(string $token, string $email, string $password): bool
-    {
-        $isValid = $this->verifyResetToken($email, $token);
-
-        return $isValid ? $this->updatePassword($email, $password) : $isValid;
+        $user = $this->baseUserService->query->where($authColumn, $credentials[$authColumn] ?? ($credentials['email']) ?? '')->first();
+        if ($user && Hash::check($credentials['password'] ?? '', $user->password)) {
+            Auth::login($user);
+            return true;
+        }
+        return false;
     }
 }

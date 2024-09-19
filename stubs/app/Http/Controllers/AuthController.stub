@@ -2,72 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Auth\AuthRequest;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\PasswordEmailRequest;
 use App\Http\Requests\Auth\PasswordResetRequest;
-use App\Interfaces\Services\AuthServiceInterface;
+use App\Services\AuthService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
     public function __construct(
-        private AuthServiceInterface $iAuthService
+        private AuthService $authService
     ) {
     }
-
-    public function create()
+    public function login(): View
     {
-        return view('content.auth.login');
+        return view('auth.login');
     }
-
-    public function store(AuthRequest $request)
+    public function auth(LoginRequest $request): RedirectResponse
     {
-        $credentials = $request->only('email', 'password');
-
-        $remember = $request->has('remember');
-
-        $authenticated = $this->iAuthService->auth($credentials, $remember);
-
-        return $authenticated ? to_route('home') : back()->with('error', 'Invalid Credentials');
+        $authenticated = $this->authService->login(
+            $request->validated(),
+            request()->has('remember'),
+        );
+        if (!$authenticated) {
+            session()->flash('error', 'The provided credentials do not match our records.');
+        }
+        return to_route('home');
     }
-
-    public function logout()
+    public function passwordRequest(): View
     {
-        $this->iAuthService->logout();
-
-        return to_route('login');
+        return view('auth.forgot-password-request');
     }
-
-    public function passwordRequest()
+    public function passwordEmail(PasswordEmailRequest $request): RedirectResponse
     {
-        return view('content.auth.password-request');
+        $emailSent = $this->authService->passwordEmail($request->validated('email'));
+        session()->flash($emailSent ? 'success' : 'error', $emailSent ? 'Password reset link sent! Check your email to continue.' : 'Failed to send password reset. Please try again later.');
+        return back();
     }
-
-    public function passwordEmail(PasswordEmailRequest $request)
+    public function passwordReset(): View
     {
-        $email = $request->validated('email');
-        $this->iAuthService->sendResetPasswordLink($email);
-
-        return back()->with('success', 'Reset your password by clicking the reset link sent to your email.');
+        $email = request('email');
+        $token = request('token');
+        return view('auth.forgot-password-reset', ['email' => $email, 'token' => $token]);
     }
-
-    public function passwordReset(string $token, string $email)
+    public function passwordUpdate(PasswordResetRequest $request)
     {
-        $data = [
-            'token' => $token,
-            'email' => $email
-        ];
-
-        return view('content.auth.password-reset', $data);
-    }
-
-    public function passwordStore(PasswordResetRequest $request, string $token, string $email)
-    {
-        $updated =  $this->iAuthService->resetPassword($token, $email, $request->validated('password'));
-
-        $key = $updated ? 'success' : 'error';
-        $value = $updated ? 'Password has been updated' : 'Could not update password! Re-send reset link and try again';
-        $target = $updated ? 'login' : 'password.request';
-
-        return to_route($target)->with($key, $value);
+        $credentials = $request->validated();
+        $updated = $this->authService->passwordUpdate($credentials);
+        session()->flash(
+            $updated ? 'success' : 'error',
+            $updated ? 'Your password has been successfully updated.' : 'Unable to update the password. Please request a new reset link and try again.'
+        );
+        return $updated ? to_route('login') : back();
     }
 }

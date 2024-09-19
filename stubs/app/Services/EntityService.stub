@@ -1,0 +1,14 @@
+<?php
+
+namespace NAMESPACE;
+
+use Dynamicbits\Larabit\Services\BaseService;
+
+class CLASS_NAME extends BaseService
+{
+    public function __construct(
+        MODEL $model
+    ) {
+        parent::__construct($model);
+    }
+}

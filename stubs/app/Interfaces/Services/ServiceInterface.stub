@@ -1,9 +1,0 @@
-<?php
-
-namespace App\Interfaces\Services;
-
-use Dynamicbits\Larabit\Interfaces\Services\BaseServiceInterface;
-
-interface {{ $entity }}ServiceInterface extends BaseServiceInterface
-{
-}
