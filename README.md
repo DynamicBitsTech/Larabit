@@ -24,3 +24,9 @@ You can run the `larabit:service` artisan command to generate a service layer fo
 ```bash
 php artisan larabit:service Product
 ```
+
+You can also run the larabit:auth command to create an AuthController and the related authentication services. Note that it does not generate any views — you will need to configure the views yourself:
+
+```bash
+php artisan larabit:auth
+```
