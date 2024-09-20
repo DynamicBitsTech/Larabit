@@ -5,21 +5,21 @@ namespace Dynamicbits\Larabit\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class Auth extends Command
+class AuthApi extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'larabit:auth';
+    protected $signature = 'larabit:auth-api';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generates an AuthController, authentication routes, and associated services.';
+    protected $description = 'Generates an AuthApiController and api authentication routes';
 
     /**
      * Execute the console command.
@@ -28,8 +28,8 @@ class Auth extends Command
     public function handle(): void
     {
         $directories = [
-            'Http/Requests/Auth',
-            'Services',
+            'Http/Controllers/Api',
+            'Http/Requests/Api/Auth',
         ];
 
         foreach ($directories as $directory) {
@@ -38,15 +38,14 @@ class Auth extends Command
         }
 
         $stubs = [
-            'app/Http/Controllers/AuthController.stub' => app_path('Http/Controllers/AuthController.php'),
-            'app/Services/AuthService.stub' => app_path('Services/AuthService.php'),
-            'app/Services/UserService.stub' => app_path('Services/UserService.php'),
+            'app/Http/Controllers/Api/AuthApiController.stub' => app_path('Http/Controllers/Api/AuthApiController.php'),
 
-            'app/Http/Requests/Auth/LoginRequest.stub' => app_path('Http/Requests/Auth/LoginRequest.php'),
-            'app/Http/Requests/Auth/PasswordEmailRequest.stub' => app_path('Http/Requests/Auth/PasswordEmailRequest.php'),
-            'app/Http/Requests/Auth/PasswordResetRequest.stub' => app_path('Http/Requests/Auth/PasswordResetRequest.php'),
+            'app/Http/Requests/Api/Auth/LoginApiRequest.stub' => app_path('Http/Requests/Api/Auth/LoginApiRequest.php'),
+            'app/Http/Requests/Api/Auth/PasswordNewApiRequest.stub' => app_path('Http/Requests/Api/Auth/PasswordNewApiRequest.php'),
+            'app/Http/Requests/Api/Auth/PasswordOtpApiRequest.stub' => app_path('Http/Requests/Api/Auth/PasswordOtpApiRequest.php'),
+            'app/Http/Requests/Api/Auth/VerifyOtpApiRequest.stub' => app_path('Http/Requests/Api/Auth/VerifyOtpApiRequest.php'),
 
-            'routes/auth.stub' => base_path('routes/auth.php')
+            'routes/auth_api.stub' => base_path('routes/auth_api.php')
         ];
 
         foreach ($stubs as $stub => $target) {
@@ -67,7 +66,7 @@ class Auth extends Command
 
     private function createFile($target, $stub)
     {
-        if (!File::exists(path: $target)) {
+        if (!File::exists($target)) {
             $content = file_get_contents("$this->stubPath/$stub");
             file_put_contents($target, $content);
         } else {

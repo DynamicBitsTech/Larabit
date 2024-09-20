@@ -56,4 +56,9 @@ class AuthController extends Controller
         );
         return $updated ? to_route('login') : back();
     }
+    public function logout(): RedirectResponse
+    {
+        $this->authService->logout();
+        return to_route('login');
+    }
 }

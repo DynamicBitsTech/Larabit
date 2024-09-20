@@ -49,7 +49,7 @@ abstract class BaseService
         $this->applyWithTrash($withTrash);
         return $this->query->select($columns)->with($relations)->where($criteria)->firstOrFail();
     }
-    public function firstByCriteria(array $criteria, array $columns = ['*'])
+    public function firstByCriteria(array $criteria, array $columns = ['*']): Model|null
     {
         return $this->query->where($criteria)->first($columns);
     }

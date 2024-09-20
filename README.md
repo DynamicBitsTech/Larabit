@@ -19,14 +19,30 @@ composer require dynamicbits/larabit
 
 ## Usage
 
-You can run the `larabit:service` artisan command to generate a service layer for a specified model. See example below:
+### Generate Service Layer
+
+Run the `larabit:service` artisan command to generate a service layer for a specified model. Example:
 
 ```bash
 php artisan larabit:service Product
 ```
 
-You can also run the larabit:auth command to create an AuthController and the related authentication services. Note that it does not generate any views — you will need to configure the views yourself:
+### Authentication Setup
+
+Run the `larabit:auth` command to create an AuthController and the related authentication services. Note that it does not generate any views, so you'll need to configure them yourself:
 
 ```bash
 php artisan larabit:auth
 ```
+
+### API Authentication
+
+To set up API authentication, run the following command:
+
+```bash
+php artisan larabit:auth-api
+```
+
+-   This command will create API routes, requests, and controllers.
+-   The API supports Laravel Sanctum or Passport. Ensure you have either one installed for proper functioning.
+-   The User model must implement the HasApiTokens trait.

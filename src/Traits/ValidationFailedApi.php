@@ -12,8 +12,10 @@ trait ValidationFailedApi
         $response = response()->json([
             'success' => false,
             'status' => 422,
-            'message' => 'Validation failed',
-            'errors' => $validator->errors()
+            'message' => 'Validation failed!',
+            'data' => [
+                'errors' => $validator->errors()
+            ]
         ], 422);
 
         throw new HttpResponseException($response);

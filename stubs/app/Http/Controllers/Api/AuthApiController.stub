@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Auth\LoginApiRequest;
+use App\Http\Requests\Api\Auth\PasswordNewApiRequest;
+use App\Http\Requests\Api\Auth\PasswordOtpApiRequest;
+use App\Http\Requests\Api\Auth\VerifyOtpApiRequest;
+use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
+
+class AuthApiController extends Controller
+{
+    public function __construct(
+        private AuthService $authService
+    ) {
+    }
+    public function login(LoginApiRequest $request): JsonResponse
+    {
+        $credentials = $request->only('email', 'password');
+        $token = $this->authService->loginApi($credentials);
+        $status = $token ? 200 : 401;
+        return response()->json([
+            'success' => $token ? true : false,
+            'status' => $status,
+            'message' => $token ? 'You have logged in successfully.' : 'Invalid credentials.',
+            'data' => ['token' => $token ? $token : null]
+        ], $status);
+    }
+    public function logout(): JsonResponse
+    {
+        $this->authService->revokeToken();
+        return response()->json([
+            'success' => true,
+            'status' => 205,
+            'message' => 'You have been logged out successfully.',
+            'data' => null
+        ], 205);
+    }
+    public function sendOtp(PasswordOtpApiRequest $request): JsonResponse
+    {
+        $otpSent = $this->authService->sendResetOtp($request->validated('email'));
+        $status = $otpSent ? 201 : 500;
+        return response()->json([
+            'success' => $otpSent,
+            'status' => $status,
+            'message' => $otpSent ? 'Password reset OTP has been sent successfully.' : 'Failed to send password reset OTP.',
+            'data' => null
+        ], $status);
+    }
+    public function verifyOtp(VerifyOtpApiRequest $request): JsonResponse
+    {
+        $verified = $this->authService->verifyResetOtp($request->validated('email'), $request->validated('otp'));
+        $status = is_bool($verified) ? 400 : 200;
+        return response()->json([
+            'success' => is_string($verified),
+            'status' => $status,
+            'message' => $verified ? 'OTP verified successfully. Please set a new password using the provided reset endpoint.' : 'Invalid OTP.',
+            'data' => [
+                'resetEndpoint' => is_string($verified) ? $verified : null
+            ]
+        ], $status);
+    }
+    public function passwordSetNew(PasswordNewApiRequest $request)
+    {
+        $updated = $this->authService->passwordSetNew(request('email'), $request->validated('password'));
+        $status = $updated ? 200 : 400;
+        return response()->json([
+            'success' => $updated,
+            'status' => $status,
+            'message' => $updated ? 'Your password has been successfully updated.' : 'Unable to update the password.',
+            'data' => null
+        ], $status);
+    }
+}

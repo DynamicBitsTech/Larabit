@@ -28,6 +28,6 @@ class BaseUserService extends BaseService
     }
     private function hasSpatie()
     {
-        TraitChecker::check(User::class, \Spatie\Permission\Traits\HasRoles::class);
+        TraitChecker::has(User::class, \Spatie\Permission\Traits\HasRoles::class);
     }
 }

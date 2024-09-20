@@ -1,0 +1,15 @@
+<?php
+
+use App\Http\Controllers\Api\AuthApiController;
+use Illuminate\Support\Facades\Route;
+
+Route::post('/login', [AuthApiController::class, 'login']);
+Route::prefix('password')->group(function () {
+    Route::post('/send-otp', [AuthApiController::class, 'sendOtp']);
+    Route::post('/verify-otp', [AuthApiController::class, 'verifyOtp']);
+    Route::post('/set-new', [AuthApiController::class, 'passwordSetNew'])->name('api.password.set-new');
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthApiController::class, 'logout']);
+});
