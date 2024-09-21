@@ -139,7 +139,9 @@ abstract class BaseService
     }
     private function applyWithTrash(bool $withTrash = false): void
     {
-        $this->hasSoftDelete() ? $this->query->withTrashed($withTrash) : throw new SoftDeleteNotAppliedException($this->model);
+        if ($withTrash) {
+            $this->hasSoftDelete() ? $this->query->withTrashed($withTrash) : throw new SoftDeleteNotAppliedException($this->model);
+        }
     }
     private function hasSoftDelete(): bool
     {
