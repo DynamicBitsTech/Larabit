@@ -27,6 +27,7 @@ class AuthController extends Controller
         );
         if (!$authenticated) {
             session()->flash('error', 'The provided credentials do not match our records.');
+            return back();
         }
         return to_route('home');
     }
