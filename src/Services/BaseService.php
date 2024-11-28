@@ -25,14 +25,14 @@ abstract class BaseService
     public function get(array $columns = ['*'], $relations = [], int $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true, bool $withTrash = false): Collection|LengthAwarePaginator
     {
         $this->applyWithTrash($withTrash);
-        $this->query->select($columns)->with($relations);
+        $this->newQuery()->select($columns)->with($relations);
         $this->orderBy($orderBy, $orderByDesc);
         return $this->fetch($pagination);
     }
     public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true, bool $withTrash = false): Collection|LengthAwarePaginator
     {
         $this->applyWithTrash();
-        $this->query->select($columns)->with($relations)->where($criteria);
+        $this->newQuery()->select($columns)->with($relations)->where($criteria);
         $this->orderBy($orderBy, $orderByDesc);
         return $this->fetch($pagination);
     }
@@ -47,15 +47,15 @@ abstract class BaseService
     public function findByCriteria(array $criteria, array $columns = ['*'], array $relations = [], bool $withTrash = false): Model
     {
         $this->applyWithTrash($withTrash);
-        return $this->query->select($columns)->with($relations)->where($criteria)->firstOrFail();
+        return $this->newQuery()->select($columns)->with($relations)->where($criteria)->firstOrFail();
     }
     public function firstByCriteria(array $criteria, array $columns = ['*']): Model|null
     {
-        return $this->query->where($criteria)->first($columns);
+        return $this->newQuery()->where($criteria)->first($columns);
     }
     public function create(array $attributes): Model
     {
-        return $this->query->create($attributes);
+        return $this->newQuery()->create($attributes);
     }
     public function createMany(array $iterableArray, bool $CreatedUpdatedBy = true, bool $timestamps = true): bool
     {
@@ -69,11 +69,11 @@ abstract class BaseService
                 return $this->applyTimestamps($attributes);
             }, $iterableArray);
         }
-        return $this->query->insert($iterableArray);
+        return $this->newQuery()->insert($iterableArray);
     }
     public function updateOrCreate(array $attributes, array $values = []): Model
     {
-        return $this->query->updateOrCreate($attributes, $values);
+        return $this->newQuery()->updateOrCreate($attributes, $values);
     }
     public function update(Model $model, array $attributes): ?bool
     {
@@ -81,7 +81,7 @@ abstract class BaseService
     }
     public function updateByCriteria(array $values, string|array|Expression $column, $operator = null, $value = null, string $boolean = 'and'): int
     {
-        return $this->query->where($column, $operator, $value, $boolean)->update($values);
+        return $this->newQuery()->where($column, $operator, $value, $boolean)->update($values);
     }
     public function upsert(array $iterableArray, array|string $uniqueBy, array|null $update = null, bool $CreatedUpdatedBy = true, bool $timestamps = true): int
     {
@@ -90,15 +90,15 @@ abstract class BaseService
                 return $this->applyCreatedUpdateBy($attributes);
             }, $iterableArray);
         }
-        return $this->query->upsert($iterableArray, $uniqueBy, $update);
+        return $this->newQuery()->upsert($iterableArray, $uniqueBy, $update);
     }
     public function pluck(string $column, string|null $key = null): SupportCollection
     {
-        return $this->query->pluck($column, $key);
+        return $this->newQuery()->pluck($column, $key);
     }
     public function pluckByCriteria(array $criteria, string $column, string|null $key = null): SupportCollection
     {
-        $this->query->where($criteria);
+        $this->newQuery()->where($criteria);
         return $this->pluck($column, $key);
     }
     public function delete(Model $model): ?bool
@@ -107,7 +107,7 @@ abstract class BaseService
     }
     public function deleteByCriteria(string|array|Expression $column, $operator = null, $value = null, string $boolean = 'and'): mixed
     {
-        return $this->query->where($column, $operator, $value, $boolean)->delete();
+        return $this->newQuery()->where($column, $operator, $value, $boolean)->delete();
     }
     public function forceDelete(Model $model): ?bool
     {
@@ -120,27 +120,27 @@ abstract class BaseService
     public function trash($columns = ['*'], $relations = [], int $pagination = 10, string $orderBy = 'deleted_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
     {
         $this->applyOnlyTrash();
-        $this->query->select($columns)->with($relations);
+        $this->newQuery()->select($columns)->with($relations);
         $this->orderBy($orderBy, $orderByDesc);
         return $this->fetch($pagination);
     }
     public function newQuery(): Builder
     {
-        return $this->query;
+        return $this->model->newQuery();
     }
     public function orderBy(string $column, bool $orderByDesc): void
     {
         $direction = $orderByDesc ? 'desc' : 'asc';
-        $this->query->orderBy($column, $direction);
+        $this->newQuery()->orderBy($column, $direction);
     }
     private function fetch(int $pagination): LengthAwarePaginator|Collection
     {
-        return $pagination ? $this->query->paginate($pagination) : $this->query->get();
+        return $pagination ? $this->newQuery()->paginate($pagination) : $this->newQuery()->get();
     }
     private function applyWithTrash(bool $withTrash = false): void
     {
         if ($withTrash) {
-            $this->hasSoftDelete() ? $this->query->withTrashed($withTrash) : throw new SoftDeleteNotAppliedException($this->model);
+            $this->hasSoftDelete() ? $this->newQuery()->withTrashed($withTrash) : throw new SoftDeleteNotAppliedException($this->model);
         }
     }
     private function hasSoftDelete(): bool
@@ -149,7 +149,7 @@ abstract class BaseService
     }
     private function applyOnlyTrash(): void
     {
-        $this->hasSoftDelete() ? $this->query->onlyTrashed() : throw new SoftDeleteNotAppliedException($this->model);
+        $this->hasSoftDelete() ? $this->newQuery()->onlyTrashed() : throw new SoftDeleteNotAppliedException($this->model);
     }
     private function applyTimestamps(array $attributes): array
     {
