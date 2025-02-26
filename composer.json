@@ -28,6 +28,6 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^11.0"
+        "laravel/framework": ">=11.0"
     }
 }
