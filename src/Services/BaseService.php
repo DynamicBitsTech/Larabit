@@ -60,9 +60,10 @@ abstract class BaseService
     public function get(array $columns = ['*'], $relations = [], int $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true, bool $withTrash = false): Collection|LengthAwarePaginator
     {
         $this->applyWithTrash($withTrash);
+        $direction = $orderByDesc ? 'asc' : 'desc';
         $this->builder->select($columns)
             ->with($relations)
-            ->orderBy($orderBy, $orderByDesc);
+            ->orderBy($orderBy, $direction);
         return $this->fetch($pagination);
     }
 
@@ -82,10 +83,11 @@ abstract class BaseService
     public function getByCriteria(array $criteria, array $columns = ['*'], array $relations = [], int $pagination = 10, string $orderBy = 'created_at', bool $orderByDesc = true, bool $withTrash = false): Collection|LengthAwarePaginator
     {
         $this->applyWithTrash($withTrash);
+        $direction = $orderByDesc ? 'asc' : 'desc';
         $this->builder->select($columns)
             ->with($relations)
             ->where($criteria)
-            ->orderBy($orderBy, $orderByDesc);
+            ->orderBy($orderBy, $direction);
         return $this->fetch($pagination);
     }
 
@@ -346,9 +348,10 @@ abstract class BaseService
     public function trash($columns = ['*'], $relations = [], int $pagination = 10, string $orderBy = 'deleted_at', bool $orderByDesc = true): Collection|LengthAwarePaginator
     {
         $this->applyOnlyTrash();
+        $direction = $orderByDesc ? 'asc' : 'desc';
         $this->builder->select($columns)
             ->with($relations)
-            ->orderBy($orderBy, $orderByDesc);
+            ->orderBy($orderBy, $direction);
         return $this->fetch($pagination);
     }
 
