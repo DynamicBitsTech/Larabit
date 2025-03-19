@@ -32,7 +32,7 @@ class BaseUserService extends BaseService
      * @param string|null $guard The authentication guard (optional).
      * @return bool|null Returns true if the user has the role, false otherwise, or null if no user is authenticated.
      */
-    public function hasRole(array|BackedEnum|Collection|int|string $roles, string|null $guard = null): ?bool
+    public function hasRole(array|BackedEnum|Collection|int|string $roles, string|null $guard = 'web'): ?bool
     {
         $this->hasSpatie();
         return Auth::user()?->hasRole($roles, $guard);
